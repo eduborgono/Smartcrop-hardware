@@ -10,14 +10,12 @@ void setup() {
 }
 
 void loop() {
-  if(millis()-timer>2000UL) {
     if(cliente.estadoConexion()) {
-      Serial.println("Conectado");
-      cliente.direccionIP(&Serial);
+      cliente.conectarServidor("smartcrop.lightup.cl", 80);
+      cliente.estadoMaceta("-Kopfh8WtjjTtCsirW8S", &Serial);
+      cliente.leerRespuesta(&Serial);
     }
     else {
-      Serial.println("Desconectado");
+      Serial.println(" ");
     }
-    timer = millis();
-  }
 }
