@@ -5,6 +5,10 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
+const byte NADA = 0; 
+const byte CONSULTA = 1; 
+const byte ACTUALIZACION = 2; 
+
 class SmartCropWifi {
 	private:
 		bool m_conectado;
@@ -28,7 +32,7 @@ class SmartCropWifi {
 		void direccionIP(HardwareSerial*);
 		void conectarServidor(char*, unsigned short);
 		void estadoMaceta(char*, HardwareSerial*);
-		void leerRespuesta(HardwareSerial*);
+		byte leerRespuesta(HardwareSerial*);
 };
 
 #endif

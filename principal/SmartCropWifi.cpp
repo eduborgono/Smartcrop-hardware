@@ -1,9 +1,5 @@
 #include "SmartCropWifi.h"
 
-const byte NADA = 0; 
-const byte CONSULTA = 1; 
-const byte ACTUALIZACION = 2; 
-
 SmartCropWifi::SmartCropWifi() {
 	m_conectado = false;
 	m_conectando = false;
@@ -63,7 +59,7 @@ void SmartCropWifi::estadoMaceta(char* id_maceta, HardwareSerial* puntero) {
 	}
 }
 
-void SmartCropWifi::leerRespuesta(HardwareSerial* puntero) {
+byte SmartCropWifi::leerRespuesta(HardwareSerial* puntero) {
 	if(m_server_conex) {
 		switch(m_consulta) {
 			case CONSULTA:
@@ -72,7 +68,7 @@ void SmartCropWifi::leerRespuesta(HardwareSerial* puntero) {
 						m_consulta = NADA;
 						m_conexion.stop();
 						m_server_conex = false;
-						return;
+						return m_consulta;
 					}
 				}
 				else {
@@ -103,4 +99,5 @@ void SmartCropWifi::leerRespuesta(HardwareSerial* puntero) {
 				break;
 		}
 	}
+  return m_consulta;
 }
