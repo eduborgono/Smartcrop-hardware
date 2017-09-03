@@ -12,6 +12,7 @@ SmartCropSensor sensores(D4, D5, D1, D2, D3);
 
 void setup() {
   Serial.begin(115200);
+  Serial.println("");
 }
 
 void loop() {
