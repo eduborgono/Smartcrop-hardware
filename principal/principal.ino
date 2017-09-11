@@ -22,7 +22,6 @@ void setup() {
 }
 
 void loop() {
-
   //sensores.leerSensores(&Serial);
 
   /*if(cliente.estadoConexion()) {
@@ -33,10 +32,9 @@ void loop() {
         cliente.estadoMaceta("-Kopfh8WtjjTtCsirW8S", &Serial);
         break;
     }
-    
   }
-  else {
+    
     Serial.println(" ");
+  else {
   }*/
-
 }
