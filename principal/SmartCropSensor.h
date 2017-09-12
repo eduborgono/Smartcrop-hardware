@@ -11,10 +11,10 @@ class SmartCropSensor {
     DHT dht;
     OneWire cableTermo;
     DallasTemperature termocupula;
-    float hume_dht;
-    float temp_dht;
-    float temp_termo;
-    int hume_tierra;
+    float hume_dht[2];
+    float temp_dht[2];
+    float temp_termo[2];
+    int hume_tierra[2];
     bool cambiar_sensor;
     byte sensor_actual;
     unsigned long timer;
@@ -23,11 +23,15 @@ class SmartCropSensor {
   public:
     SmartCropSensor(byte, byte);
     ~SmartCropSensor();
-    void leerSensores(HardwareSerial*);
+    void leerSensores();
     float getTempAmbiental();
     float getHumeAmbiental();
     float getTempTierra();
     int getHumeTierra();
+    bool cambioTempAmbiental();
+    bool cambioHumeAmbiental();
+    bool cambioTempTierra();
+    bool cambioHumeTierra();
 };
 
 #endif
