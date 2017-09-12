@@ -19,15 +19,15 @@ class SmartCropSensor {
     byte sensor_actual;
     unsigned long timer;
     byte numero_lecturas;
-    byte pin_s0;
-    byte pin_s1;
-    byte pin_s2;
 
   public:
-    SmartCropSensor(byte, byte, byte, byte, byte);
+    SmartCropSensor(byte, byte);
     ~SmartCropSensor();
     void leerSensores(HardwareSerial*);
-  
+    float getTempAmbiental();
+    float getHumeAmbiental();
+    float getTempTierra();
+    int getHumeTierra();
 };
 
 #endif

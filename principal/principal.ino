@@ -9,7 +9,7 @@
 #define pin_termocupula D5
 #define pin_hidro A0*/
 
-SmartCropSensor sensores(D4, D5, D1, D2, D3);
+SmartCropSensor sensores(D4, D5);
 
 SmartCropWifi cliente;
 unsigned long timer;
