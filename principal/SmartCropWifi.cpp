@@ -1,19 +1,32 @@
 #include "SmartCropWifi.h"
 
+extern String RID;
+extern String Rname;
+extern String Rcontent;
+
 SmartCropWifi::SmartCropWifi() {
 	m_conectado = false;
 	m_conectando = false;
-	m_server_conex = false;
+  conectando_socket = false;
 	m_consulta = NADA;
 }
 
 SmartCropWifi::~SmartCropWifi() {  }
 
+/**
+ * Inicia un intento de conexión a la red domestica
+ */
 void SmartCropWifi::conectarRed(char* ssid, char* password) {
 	WiFi.begin(ssid, password);
 	m_conectando = true;
 }
 
+/**
+ * Verifica el estado de un intento de conexion. De perderse
+ * una conexion se debe realizar un nuevo intento de conexion.
+ * 
+ * @return Si está establecida una conexión a internet.
+ */
 bool SmartCropWifi::estadoConexion() {
 	if(m_conectando) {
 		if(WiFi.status() == WL_CONNECTED) { 
@@ -30,25 +43,61 @@ bool SmartCropWifi::estadoConexion() {
 	return m_conectado;
 }
 
+/**
+ * Imprime la dirección IP en un puerto serial
+ * 
+ * @param puntero Un puntero al puerto serial en el que se imprimira.
+ */
 void SmartCropWifi::direccionIP(HardwareSerial* puntero) {
 	if(m_conectado) {
 		puntero->println(WiFi.localIP());
 	}
 }
 
-void SmartCropWifi::conectarServidor(char* host, unsigned short puerto) {
-	if(m_conectado && !m_server_conex) {
-		if(!m_conexion.connect(host, puerto)) {
-			m_server_conex = false;
-		}
-		else {
-			m_server_conex = true;
+/**
+ * Conecta a un servidor dado mediante un host y un puerto.
+ * 
+ * @param host Cadena de caracteres de la direccion del servidor
+ * @param puerto Numero del puerto al cual conectarse.
+ */
+bool SmartCropWifi::conectarServidor(char* host, unsigned short puerto) {
+	if(m_conectado) {
+		if(socket_cliente.connect(host, puerto)) {
+      conectando_socket = true;
+			return true;
 		}
 	}
+  return false;
 }
 
+bool SmartCropWifi::estadoServidor() {
+  if(socket_cliente.connected()) {
+    if(conectando_socket) {
+      socket_cliente.send("connection", "message", "Connected !!!!");
+      conectando_socket = false;
+    }
+    return true;
+  }
+  return false;
+}
+
+void SmartCropWifi::recepcionServidor(HardwareSerial* puntero) {
+  if(socket_cliente.monitor()) {
+    if (RID == "humidity"){
+      puntero->println(Rcontent); 
+    }
+  }
+}
+
+void SmartCropWifi::actHumeAmbiental(float hume) {
+  socket_cliente.send("change humidity", "message", String(hume));
+}
+
+/**
+ * Obsoleto
+ */
 void SmartCropWifi::estadoMaceta(char* id_maceta, HardwareSerial* puntero) {
-	if(m_server_conex && m_consulta == NADA) {
+	/*if(m_server_conex && m_consulta == NADA) {
 		m_conexion.print("GET /api/pots/");
 		m_conexion.print(id_maceta);
 		m_conexion.println(" HTTP/1.1\r\nHost: smartcrop.lightup.cl\r\nCache-Control: no-cache\r\n");
@@ -56,11 +105,14 @@ void SmartCropWifi::estadoMaceta(char* id_maceta, HardwareSerial* puntero) {
 		m_consulta = CONSULTA;
 		m_leer_json = false;
 		m_indice_respuesta = 0;
-	}
+	}*/
 }
 
+/**
+ * Obsoleto
+ */
 byte SmartCropWifi::leerRespuesta(HardwareSerial* puntero) {
-	if(m_server_conex) {
+	/*if(m_server_conex) {
 		switch(m_consulta) {
 			case CONSULTA:
 				if(m_conexion.available() == 0) {
@@ -99,5 +151,8 @@ byte SmartCropWifi::leerRespuesta(HardwareSerial* puntero) {
 				break;
 		}
 	}
-  return m_consulta;
+  return m_consulta;*/
+  return 0;
 }
+
+
