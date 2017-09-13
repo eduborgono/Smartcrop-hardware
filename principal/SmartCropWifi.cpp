@@ -93,6 +93,18 @@ void SmartCropWifi::actHumeAmbiental(float hume) {
   socket_cliente.send("change humidity", "message", String(hume));
 }
 
+void SmartCropWifi::actTempAmbiental(float temp) {
+  socket_cliente.send("change room temperature", "message", String(temp));
+}
+
+void SmartCropWifi::actTempTierra(float temp) {
+  socket_cliente.send("change temperature", "message", String(temp));
+}
+
+void SmartCropWifi::actHumeTierra(int hume) {
+  socket_cliente.send("change moisture", "message", String(hume));
+}
+
 /**
  * Obsoleto
  */

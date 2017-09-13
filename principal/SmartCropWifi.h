@@ -39,6 +39,9 @@ class SmartCropWifi {
 		byte leerRespuesta(HardwareSerial*);
 
     void actHumeAmbiental(float);
+    void actTempAmbiental(float);
+    void actTempTierra(float);
+    void actHumeTierra(int);
 };
 
 #endif
