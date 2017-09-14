@@ -17,8 +17,15 @@ SmartCropWifi::~SmartCropWifi() {  }
  * Inicia un intento de conexión a la red domestica
  */
 void SmartCropWifi::conectarRed(char* ssid, char* password) {
-	WiFi.begin(ssid, password);
-	m_conectando = true;
+  WiFi.disconnect();
+  WiFi.begin(ssid, password);
+  m_conectando = true;
+}
+void SmartCropWifi::desconectarRed() {
+  WiFi.disconnect();
+  m_conectando = false;
+  m_conectado = false;
+  conectando_socket = false;
 }
 
 /**
@@ -27,20 +34,29 @@ void SmartCropWifi::conectarRed(char* ssid, char* password) {
  * 
  * @return Si está establecida una conexión a internet.
  */
-bool SmartCropWifi::estadoConexion() {
+int SmartCropWifi::estadoConexion() {
+  int estado = WiFi.status();
 	if(m_conectando) {
-		if(WiFi.status() == WL_CONNECTED) { 
+		if(estado == WL_CONNECTED) { 
 			m_conectando = false;
 			m_conectado = true;
+      return 1;
 		}
+    else if(estado == WL_NO_SSID_AVAIL || estado == WL_CONNECT_FAILED) {
+      return 2;
+   }
 	}
 	else {
-		if(m_conectado && WiFi.status() != WL_CONNECTED) { 
-			m_conectado = false;
-			m_conectando = false;
+		if(m_conectado) { 
+      if(estado != WL_CONNECTED) {
+			  m_conectado = false;
+			  m_conectando = false;
+        return 0;
+      }
+      return 1;
 		}
 	}
-	return m_conectado;
+	return 0;
 }
 
 /**
@@ -87,6 +103,22 @@ void SmartCropWifi::recepcionServidor(HardwareSerial* puntero) {
       puntero->println(Rcontent); 
     }
   }
+}
+
+void SmartCropWifi::actualizarBaseDatos(char* host, unsigned short puerto , char* id, float hume_amb, float temp_amb, float temp_tie, int hume_tie) {
+  WiFiClient cliente;
+  if (!cliente.connect(host, puerto)) {
+    Serial.println("connection failed");
+    return;
+  }
+  String datos = String("{\"temperature\":"+String(temp_tie)+",\"roomTemperature\":"+String(temp_amb)+",\"moisture\":"+String(hume_tie)+",\"humidity\":"+String(hume_amb)+"}");
+  cliente.print("PUT /api/pots/");
+  cliente.print(id);
+  cliente.print(" HTTP/1.1\r\nHost: smartcrop.lightup.cl\r\nConnection: close\r\nContent-Type: application/json\r\nCache-Control: no-cache\r\nContent-Length: ");
+  cliente.print(datos.length());
+  cliente.print("\r\n\r\n");
+  cliente.println(datos);
+  cliente.stop();
 }
 
 void SmartCropWifi::actHumeAmbiental(float hume) {

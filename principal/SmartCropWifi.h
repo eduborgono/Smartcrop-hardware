@@ -30,7 +30,8 @@ class SmartCropWifi {
 		SmartCropWifi();
 		~SmartCropWifi();
 		void conectarRed(char*, char*);
-		bool estadoConexion();
+    void desconectarRed();
+		int estadoConexion();
 		void direccionIP(HardwareSerial*);
 		bool conectarServidor(char*, unsigned short);
     void recepcionServidor(HardwareSerial*);
@@ -38,6 +39,7 @@ class SmartCropWifi {
 		void estadoMaceta(char*, HardwareSerial*);
 		byte leerRespuesta(HardwareSerial*);
 
+    void actualizarBaseDatos(char*,unsigned short,char*,float,float,float,int);
     void actHumeAmbiental(float);
     void actTempAmbiental(float);
     void actTempTierra(float);

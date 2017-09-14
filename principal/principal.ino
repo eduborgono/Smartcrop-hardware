@@ -31,6 +31,9 @@ void setup() {
 }
 
 void loop() {
+  /**
+   * Configuracion Wifi
+   */
   if(configInter) {
     if(usb_celu.available()) {
       caracterActual = usb_celu.read();
@@ -60,24 +63,30 @@ void loop() {
           Serial.print(pssw);
           Serial.print("'");
           Serial.println();
-
+          if(strlen(ssid) == 0 || strlen(pssw) == 0) {
+            usb_celu.print('0'); //0 no conectado malas credenciales
+          }
           else {
-            configInter = false;
             internet.conectarRed(ssid, pssw);
+            configInter = false;
+            usb_celu.print('1'); //1 conectando ..
             timer = millis();
           }
         }
       }
     }
   }
+  /**
+   * Todo lo relacionado a los sensores y envio de datos
+   */
   else {
-    if(internet.estadoConexion()) { //conectado
+    if(internet.estadoConexion() == 1) { //conectado
       if(!reconectar) { // Conectado por primera vez, se setea para una posible reconexion y setear valores
         reconectar = true;
         Serial.println("");
         internet.direccionIP(&Serial);
         internet.conectarServidor("smartcrop.lightup.cl", 80);
-        
+        usb_celu.print('2'); //2 conectado !
         timer = millis();
       }
       if(millis()-timer>8000UL) {
@@ -95,6 +104,8 @@ void loop() {
           if(sensores.cambioHumeTierra()) {
             internet.actHumeTierra(sensores.getHumeTierra());
           }
+
+          internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59b9f321fbd5db75205b2602", sensores.getHumeAmbiental(), sensores.getTempAmbiental(), sensores.getTempTierra(), sensores.getHumeTierra());
         }
         
         timer = millis();
@@ -106,18 +117,14 @@ void loop() {
         }
       }
     }
-    else { //desconectado
+    else if (internet.estadoConexion() == 0) { //desconectado
       if(reconectar) { //se conecto antes, ya no
         Serial.println("Se debe reconfigurar la clave");
       }
-      else { //conectando
-        
-        
-        if(millis()-timer>10000UL) {
-          
-          configInter = true;
-        }
-      }
+    }
+    else if(internet.estadoConexion() == 2) { //malas credenciales
+      usb_celu.print('0'); //0 no conectado malas credenciales
+      configInter = true;
     }
   }
 }
