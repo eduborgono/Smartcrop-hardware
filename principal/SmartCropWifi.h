@@ -34,7 +34,7 @@ class SmartCropWifi {
 		int estadoConexion();
 		void direccionIP(HardwareSerial*);
 		bool conectarServidor(char*, unsigned short);
-    void recepcionServidor(HardwareSerial*);
+    void recepcionServidor(int);
     bool estadoServidor();
 		void estadoMaceta(char*, HardwareSerial*);
 		byte leerRespuesta(HardwareSerial*);

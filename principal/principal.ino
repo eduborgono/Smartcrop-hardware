@@ -2,7 +2,7 @@
 #include "SmartCropWifi.h"
 #include <SoftwareSerial.h>
 
-SmartCropSensor sensores(D4, D5); // dht, termo
+SmartCropSensor sensores(D4, D5, D0); // dht, termo
 
 SmartCropWifi internet;
 bool reconectar;
@@ -113,7 +113,7 @@ void loop() {
       else {
         sensores.leerSensores();
         if(internet.estadoServidor()) {
-          internet.recepcionServidor(&Serial);
+          internet.recepcionServidor(sensores.bombaAgua());
         }
       }
     }

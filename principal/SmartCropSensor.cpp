@@ -7,8 +7,12 @@ const byte sensor_termoculpula = 1;
 const byte sensor_hidrometro = 2;
 const byte cantidad_sensores = 3;
 
-SmartCropSensor::SmartCropSensor(byte pin_dht, byte pin_termo): 
+SmartCropSensor::SmartCropSensor(byte pin_dht, byte pin_termo, byte pin_pump): 
                     dht(pin_dht, DHT22), cableTermo(pin_termo), termocupula(&cableTermo)  {
+
+  pin_bomba = pin_pump;
+  pinMode(pin_bomba, OUTPUT);
+  digitalWrite(pin_bomba, LOW);
   hume_dht[revisada] = 0.0;
   temp_dht[revisada] = 0.0;
   temp_termo[revisada] = 0.0;
@@ -79,5 +83,9 @@ bool SmartCropSensor::cambioTempTierra() {
 }
 bool SmartCropSensor::cambioHumeTierra() {
   return (hume_tierra[revisada] != hume_tierra[temporal]);
+}
+
+int SmartCropSensor::bombaAgua() {
+  return pin_bomba;
 }
 

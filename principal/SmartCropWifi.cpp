@@ -97,10 +97,18 @@ bool SmartCropWifi::estadoServidor() {
   return false;
 }
 
-void SmartCropWifi::recepcionServidor(HardwareSerial* puntero) {
+void SmartCropWifi::recepcionServidor(int bomba) {
   if(socket_cliente.monitor()) {
     if (RID == "humidity"){
-      puntero->println(Rcontent); 
+      //puntero->println(Rcontent); 
+    }
+    if (RID == "bomb") {
+      if(Rcontent == "Activar bomba") {
+        digitalWrite(bomba,HIGH);
+      }
+      else {
+        digitalWrite(bomba,LOW);
+      }
     }
   }
 }

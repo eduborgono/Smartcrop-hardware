@@ -8,6 +8,7 @@
 
 class SmartCropSensor {
   private:
+    int pin_bomba;
     DHT dht;
     OneWire cableTermo;
     DallasTemperature termocupula;
@@ -21,7 +22,7 @@ class SmartCropSensor {
     byte numero_lecturas;
 
   public:
-    SmartCropSensor(byte, byte);
+    SmartCropSensor(byte, byte, byte);
     ~SmartCropSensor();
     void leerSensores();
     float getTempAmbiental();
@@ -32,6 +33,7 @@ class SmartCropSensor {
     bool cambioHumeAmbiental();
     bool cambioTempTierra();
     bool cambioHumeTierra();
+    int bombaAgua();
 };
 
 #endif
