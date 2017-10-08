@@ -187,7 +187,7 @@ bool SmartCropWifi::cargarClaves(char* ssid, char* password, int n1, int n2) {
           }
           else if(i==1) {
             int j = 0;
-            while(j<n1 && j<line.length()) {
+            while(j<n1 && j<(line.length()-1)) {
               ssid[j] = line[j];
               j++;
             }
@@ -196,7 +196,7 @@ bool SmartCropWifi::cargarClaves(char* ssid, char* password, int n1, int n2) {
           }
           else if(i==2) {
             int j = 0;
-            while(j<n2 && j<line.length()) {
+            while(j<n2 && j<(line.length()-1)) {
               password[j] = line[j];
               j++;
             }

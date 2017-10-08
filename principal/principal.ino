@@ -27,7 +27,7 @@ void setup() {
   Serial.begin(115200);
   usb_celu.begin(57600);
   Serial.println("");
-  internet.printConfig(&Serial);
+  //internet.printConfig(&Serial);
   timer = millis();
 }
 
@@ -38,9 +38,6 @@ void loop() {
    
   if(configInter) {
     if(internet.cargarClaves(ssid, pssw, 33, 64)) {
-      Serial.println("Cargado!");
-      Serial.print("'"); Serial.print(ssid);Serial.println("'");
-      Serial.print("'"); Serial.print(pssw);Serial.println("'");
       internet.conectarRed(ssid, pssw);
       configInter = false;
       usb_celu.print('1'); //1 conectando ..
@@ -96,7 +93,6 @@ void loop() {
   else {
     if(internet.estadoConexion() == 1) { //conectado
       if(!reconectar) { // Conectado por primera vez, se setea para una posible reconexion y setear valores
-        Serial.println("Conectado!");
         reconectar = true;
         internet.guardarClaves(ssid, pssw, true);
         Serial.println("");
@@ -106,7 +102,6 @@ void loop() {
         timer = millis();
       }
       if(millis()-timer>8000UL) {
-        internet.printConfig(&Serial);
         if(internet.estadoServidor()) {
           if(sensores.cambioTempAmbiental()) {
             internet.actTempAmbiental(sensores.getTempAmbiental());
@@ -141,7 +136,6 @@ void loop() {
     else if(internet.estadoConexion() == 2) { //malas credenciales
       usb_celu.print('0'); //0 no conectado malas credenciales
       configInter = true;
-      Serial.println("uwu");
     }
   }
 }
