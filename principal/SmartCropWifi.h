@@ -5,6 +5,7 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 #include <SocketIOClient.h>
+#include "FS.h"
 
 const byte NADA = 0; 
 const byte CONSULTA = 1; 
@@ -44,6 +45,10 @@ class SmartCropWifi {
     void actTempAmbiental(float);
     void actTempTierra(float);
     void actHumeTierra(int);
+
+    void guardarClaves(char*, char*, bool);
+    bool cargarClaves(char*, char*, int, int);
+    void printConfig(HardwareSerial*);
 };
 
 #endif

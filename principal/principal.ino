@@ -27,6 +27,7 @@ void setup() {
   Serial.begin(115200);
   usb_celu.begin(57600);
   Serial.println("");
+  internet.printConfig(&Serial);
   timer = millis();
 }
 
@@ -34,43 +35,56 @@ void loop() {
   /**
    * Configuracion Wifi
    */
+   
   if(configInter) {
-    if(usb_celu.available()) {
-      caracterActual = usb_celu.read();
-      if(caracterActual != '\r') {
-        if(indice < max_chars) {
-          *(ptr_slot+indice) = caracterActual;
-          indice++;
-        }
-      }
-      else {
-        *(ptr_slot+indice) = '\0';
-        if(max_chars == 33) {
-          indice = 0;
-          max_chars = 64;
-          ptr_slot = &pssw[0];
+    if(internet.cargarClaves(ssid, pssw, 33, 64)) {
+      Serial.println("Cargado!");
+      Serial.print("'"); Serial.print(ssid);Serial.println("'");
+      Serial.print("'"); Serial.print(pssw);Serial.println("'");
+      internet.conectarRed(ssid, pssw);
+      configInter = false;
+      usb_celu.print('1'); //1 conectando ..
+      timer = millis();
+    }
+    else {
+    
+      if(usb_celu.available()) {
+        caracterActual = usb_celu.read();
+        if(caracterActual != '\r') {
+          if(indice < max_chars) {
+            *(ptr_slot+indice) = caracterActual;
+            indice++;
+          }
         }
         else {
-          indice = 0;
-          max_chars = 33;
-          ptr_slot = &ssid[0];
-          Serial.println();
-          Serial.print("'");
-          Serial.print(ssid);
-          Serial.print("'");
-          Serial.println();
-          Serial.print("'");
-          Serial.print(pssw);
-          Serial.print("'");
-          Serial.println();
-          if(strlen(ssid) == 0 || strlen(pssw) == 0) {
-            usb_celu.print('0'); //0 no conectado malas credenciales
+          *(ptr_slot+indice) = '\0';
+          if(max_chars == 33) {
+            indice = 0;
+            max_chars = 64;
+            ptr_slot = &pssw[0];
           }
           else {
-            internet.conectarRed(ssid, pssw);
-            configInter = false;
-            usb_celu.print('1'); //1 conectando ..
-            timer = millis();
+            indice = 0;
+            max_chars = 33;
+            ptr_slot = &ssid[0];
+            Serial.println();
+            Serial.print("'");
+            Serial.print(ssid);
+            Serial.print("'");
+            Serial.println();
+            Serial.print("'");
+            Serial.print(pssw);
+            Serial.print("'");
+            Serial.println();
+            if(strlen(ssid) == 0 || strlen(pssw) == 0) {
+              usb_celu.print('0'); //0 no conectado malas credenciales
+            }
+            else {
+              internet.conectarRed(ssid, pssw);
+              configInter = false;
+              usb_celu.print('1'); //1 conectando ..
+              timer = millis();
+            }
           }
         }
       }
@@ -82,7 +96,9 @@ void loop() {
   else {
     if(internet.estadoConexion() == 1) { //conectado
       if(!reconectar) { // Conectado por primera vez, se setea para una posible reconexion y setear valores
+        Serial.println("Conectado!");
         reconectar = true;
+        internet.guardarClaves(ssid, pssw, true);
         Serial.println("");
         internet.direccionIP(&Serial);
         internet.conectarServidor("smartcrop.lightup.cl", 80);
@@ -90,7 +106,7 @@ void loop() {
         timer = millis();
       }
       if(millis()-timer>8000UL) {
-  
+        internet.printConfig(&Serial);
         if(internet.estadoServidor()) {
           if(sensores.cambioTempAmbiental()) {
             internet.actTempAmbiental(sensores.getTempAmbiental());
@@ -125,6 +141,7 @@ void loop() {
     else if(internet.estadoConexion() == 2) { //malas credenciales
       usb_celu.print('0'); //0 no conectado malas credenciales
       configInter = true;
+      Serial.println("uwu");
     }
   }
 }
