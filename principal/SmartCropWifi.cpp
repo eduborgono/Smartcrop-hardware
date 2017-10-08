@@ -145,6 +145,80 @@ void SmartCropWifi::actHumeTierra(int hume) {
   socket_cliente.send("change moisture", "message", String(hume));
 }
 
+void SmartCropWifi:: guardarClaves(char* ssid, char* password, bool reconectar) {
+  if(SPIFFS.begin()) {
+    File f = SPIFFS.open("/config.ini", "w");
+    if(f) {
+      f.println((reconectar)?(1):(0));
+      f.println(ssid);
+      f.println(password);
+    }
+    f.close();
+    SPIFFS.end();
+  }
+}
+
+void SmartCropWifi::printConfig(HardwareSerial* srl) {
+  if(SPIFFS.begin()) {
+    File f = SPIFFS.open("/config.ini", "r");
+    if(f) {
+      if(f.size() > 0) {
+        while(f.available()) {
+          String line = f.readStringUntil('\n');
+          srl->println(line);
+        }
+      }
+    }
+    f.close();
+    SPIFFS.end();
+  }
+}
+
+bool SmartCropWifi::cargarClaves(char* ssid, char* password, int n1, int n2) {
+  if(SPIFFS.begin()) {
+    File f = SPIFFS.open("/config.ini", "r");
+    if(f) {
+      if(f.size() > 0) {
+        byte i = 0;
+        while(f.available()) {
+          String line = f.readStringUntil('\n');
+          if(i==0) {
+            if(line.toInt() == 0) break;
+          }
+          else if(i==1) {
+            int j = 0;
+            while(j<n1 && j<(line.length()-1)) {
+              ssid[j] = line[j];
+              j++;
+            }
+            if(j<n1) ssid[j] = '\0';
+            else ssid[j-1] = '\0';
+          }
+          else if(i==2) {
+            int j = 0;
+            while(j<n2 && j<(line.length()-1)) {
+              password[j] = line[j];
+              j++;
+            }
+            if(j<n2) password[j] = '\0';
+            else password[j-1] = '\0';
+          }
+          i++;
+        }
+        if(i<3) {
+          ssid[0] = '\0';
+          password[0] = '\0';
+          return false;
+        }
+        return true;
+      }
+      return false;
+    }
+    f.close();
+    SPIFFS.end();
+  }
+}
+
 /**
  * Obsoleto
  */
