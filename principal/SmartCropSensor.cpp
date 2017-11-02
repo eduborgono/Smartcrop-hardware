@@ -42,7 +42,7 @@ void SmartCropSensor::leerSensores() {
         break;
       case sensor_hidrometro:
         hume_tierra[revisada] = analogRead(A0);
-        //hume_tierra = map(hume_tierra,850,300,0,100);
+        hume_tierra = map(hume_tierra,1000,500,1,100);
         break;
     }
     

@@ -96,29 +96,12 @@ void loop() {
         timer = millis();
       }
       if(millis()-timer>8000UL) {
-  
-        /*if(internet.estadoServidor()) {
-          if(sensores.cambioTempAmbiental()) {
-            internet.actTempAmbiental(sensores.getTempAmbiental());
-          }
-          if(sensores.cambioHumeAmbiental()) {
-            internet.actHumeAmbiental(sensores.getHumeAmbiental());
-          }
-          if(sensores.cambioTempTierra()) {
-            internet.actTempTierra(sensores.getTempTierra());
-          }
-          if(sensores.cambioHumeTierra()) {
-            internet.actHumeTierra(sensores.getHumeTierra());
-          }
-
-          
-        }*/
-        //internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59b9f321fbd5db75205b2602", sensores.getHumeAmbiental(), sensores.getTempAmbiental(), sensores.getTempTierra(), sensores.getHumeTierra());
-        internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59e9b52d03f6e54106d27508", random(100), random(100), random(100), random(100));
+        internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59e9b52d03f6e54106d27508", sensores.getHumeAmbiental(), sensores.getTempAmbiental(), sensores.getTempTierra(), sensores.getHumeTierra());
+        //internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59e9b52d03f6e54106d27508", random(100), random(100), random(100), random(100));
         timer = millis();
       }
       else {
-        //sensores.leerSensores();
+        sensores.leerSensores();
         internet.recepcionServidor();
       }
     }
