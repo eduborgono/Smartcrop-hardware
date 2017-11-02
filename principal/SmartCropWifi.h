@@ -4,19 +4,20 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
-#include <SocketIOClient.h>
+#include <SocketIoClient.h>
 
 const byte NADA = 0; 
 const byte CONSULTA = 1; 
 const byte ACTUALIZACION = 2; 
+
+void event_bomb(const char *, size_t);
 
 class SmartCropWifi {
 	private:
 		bool m_conectado;
 		bool m_conectando;
     
-    SocketIOClient socket_cliente;
-    bool conectando_socket;
+    SocketIoClient socket_cliente;
     
 		char m_respuesta[35];
 		byte m_indice_respuesta;
@@ -34,8 +35,7 @@ class SmartCropWifi {
 		int estadoConexion();
 		void direccionIP(HardwareSerial*);
 		bool conectarServidor(char*, unsigned short);
-    void recepcionServidor(int);
-    bool estadoServidor();
+    void recepcionServidor();
 		void estadoMaceta(char*, HardwareSerial*);
 		byte leerRespuesta(HardwareSerial*);
 

@@ -1,13 +1,8 @@
 #include "SmartCropWifi.h"
 
-extern String RID;
-extern String Rname;
-extern String Rcontent;
-
 SmartCropWifi::SmartCropWifi() {
 	m_conectado = false;
 	m_conectando = false;
-  conectando_socket = false;
 	m_consulta = NADA;
 }
 
@@ -25,7 +20,6 @@ void SmartCropWifi::desconectarRed() {
   WiFi.disconnect();
   m_conectando = false;
   m_conectado = false;
-  conectando_socket = false;
 }
 
 /**
@@ -78,39 +72,35 @@ void SmartCropWifi::direccionIP(HardwareSerial* puntero) {
  */
 bool SmartCropWifi::conectarServidor(char* host, unsigned short puerto) {
 	if(m_conectado) {
-		if(socket_cliente.connect(host, puerto)) {
-      conectando_socket = true;
-			return true;
-		}
+		socket_cliente.begin(host, puerto);
+    socket_cliente.on("bomb", event_bomb);
+    return true;
 	}
   return false;
 }
 
-bool SmartCropWifi::estadoServidor() {
-  if(socket_cliente.connected()) {
-    if(conectando_socket) {
-      socket_cliente.send("connection", "message", "Connected !!!!");
-      conectando_socket = false;
+void event_bomb(const char * payload, size_t length) {
+  char* tofree = strdup(payload);
+  char* line = strtok(tofree, ",");
+  if (line != 0) {
+    if(strcmp("Activar bomba",line) == 0) {
+      line = strtok(0, ",");
+      if(strcmp("59e9b52d03f6e54106d27508", line) == 0) {
+        digitalWrite(D0,HIGH);
+      }
     }
-    return true;
+    else if(strcmp("Desactivar bomba",line) == 0) {
+      line = strtok(0, ",");
+      if(strcmp("59e9b52d03f6e54106d27508", line) == 0) {
+        digitalWrite(D0,LOW);
+      }
+    }
   }
-  return false;
+  free(tofree);
 }
 
-void SmartCropWifi::recepcionServidor(int bomba) {
-  if(socket_cliente.monitor()) {
-    if (RID == "humidity"){
-      //puntero->println(Rcontent); 
-    }
-    if (RID == "bomb") {
-      if(Rcontent == "Activar bomba") {
-        digitalWrite(bomba,HIGH);
-      }
-      else {
-        digitalWrite(bomba,LOW);
-      }
-    }
-  }
+void SmartCropWifi::recepcionServidor() {
+  socket_cliente.loop();
 }
 
 void SmartCropWifi::actualizarBaseDatos(char* host, unsigned short puerto , char* id, float hume_amb, float temp_amb, float temp_tie, int hume_tie) {
@@ -130,19 +120,19 @@ void SmartCropWifi::actualizarBaseDatos(char* host, unsigned short puerto , char
 }
 
 void SmartCropWifi::actHumeAmbiental(float hume) {
-  socket_cliente.send("change humidity", "message", String(hume));
+  //socket_cliente.send("change humidity", "message", String(hume));
 }
 
 void SmartCropWifi::actTempAmbiental(float temp) {
-  socket_cliente.send("change room temperature", "message", String(temp));
+  //socket_cliente.send("change room temperature", "message", String(temp));
 }
 
 void SmartCropWifi::actTempTierra(float temp) {
-  socket_cliente.send("change temperature", "message", String(temp));
+  //socket_cliente.send("change temperature", "message", String(temp));
 }
 
 void SmartCropWifi::actHumeTierra(int hume) {
-  socket_cliente.send("change moisture", "message", String(hume));
+  //socket_cliente.send("change moisture", "message", String(hume));
 }
 
 /**

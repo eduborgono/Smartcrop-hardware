@@ -2,6 +2,8 @@
 #include "SmartCropWifi.h"
 #include <SoftwareSerial.h>
 
+//59e9b52d03f6e54106d27508
+
 SmartCropSensor sensores(D4, D5, D0); // dht, termo
 
 SmartCropWifi internet;
@@ -35,7 +37,11 @@ void loop() {
    * Configuracion Wifi
    */
   if(configInter) {
-    if(usb_celu.available()) {
+    internet.conectarRed("Fayola", "frodo123");
+    configInter = false;
+    usb_celu.print('1'); //1 conectando ..
+    timer = millis();
+    /*if(usb_celu.available()) {
       caracterActual = usb_celu.read();
       if(caracterActual != '\r') {
         if(indice < max_chars) {
@@ -74,7 +80,7 @@ void loop() {
           }
         }
       }
-    }
+    }*/
   }
   /**
    * Todo lo relacionado a los sensores y envio de datos
@@ -91,7 +97,7 @@ void loop() {
       }
       if(millis()-timer>8000UL) {
   
-        if(internet.estadoServidor()) {
+        /*if(internet.estadoServidor()) {
           if(sensores.cambioTempAmbiental()) {
             internet.actTempAmbiental(sensores.getTempAmbiental());
           }
@@ -105,16 +111,15 @@ void loop() {
             internet.actHumeTierra(sensores.getHumeTierra());
           }
 
-          internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59b9f321fbd5db75205b2602", sensores.getHumeAmbiental(), sensores.getTempAmbiental(), sensores.getTempTierra(), sensores.getHumeTierra());
-        }
-        
+          
+        }*/
+        //internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59b9f321fbd5db75205b2602", sensores.getHumeAmbiental(), sensores.getTempAmbiental(), sensores.getTempTierra(), sensores.getHumeTierra());
+        internet.actualizarBaseDatos("smartcrop.lightup.cl", 80 , "59e9b52d03f6e54106d27508", random(100), random(100), random(100), random(100));
         timer = millis();
       }
       else {
-        sensores.leerSensores();
-        if(internet.estadoServidor()) {
-          internet.recepcionServidor(sensores.bombaAgua());
-        }
+        //sensores.leerSensores();
+        internet.recepcionServidor();
       }
     }
     else if (internet.estadoConexion() == 0) { //desconectado
