@@ -41,8 +41,8 @@ void SmartCropSensor::leerSensores() {
         temp_termo[temporal] = termocupula.getTempCByIndex(0);
         break;
       case sensor_hidrometro:
-        hume_tierra[revisada] = analogRead(A0);
-        hume_tierra = map(hume_tierra,1000,500,1,100);
+        hume_tierra[temporal] = analogRead(A0);
+        hume_tierra[temporal] = map(hume_tierra[temporal],1000,500,1,100);
         break;
     }
     
@@ -68,7 +68,7 @@ float SmartCropSensor::getTempTierra() {
 }
 
 int SmartCropSensor::getHumeTierra() {
-  //if(hume_tierra[temporal]<=100 && hume_tierra[temporal]>=0) hume_tierra[revisada] = hume_tierra[temporal];
+  if(hume_tierra[temporal]<=100 && hume_tierra[temporal]>=0) hume_tierra[revisada] = hume_tierra[temporal];
   return hume_tierra[revisada];
 }
 

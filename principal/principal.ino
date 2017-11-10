@@ -37,11 +37,12 @@ void loop() {
    * Configuracion Wifi
    */
   if(configInter) {
-    internet.conectarRed("Fayola", "frodo123");
+    /*internet.conectarRed("macetero", "hola1234");
     configInter = false;
     usb_celu.print('1'); //1 conectando ..
-    timer = millis();
-    /*if(usb_celu.available()) {
+    timer = millis();*/
+    
+    if(usb_celu.available()) {
       caracterActual = usb_celu.read();
       if(caracterActual != '\r') {
         if(indice < max_chars) {
@@ -80,7 +81,7 @@ void loop() {
           }
         }
       }
-    }*/
+    }
   }
   /**
    * Todo lo relacionado a los sensores y envio de datos
